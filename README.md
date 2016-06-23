@@ -1,2 +1,4 @@
-# DataBundle
-Allow to load fixtures datasets through command line.
+DataBundle
+==========
+
+A Symfony project created on June 23, 2016, 10:42 pm.

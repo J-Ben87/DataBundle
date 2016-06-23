@@ -1,0 +1,29 @@
+{
+    "name": "j-ben87/data-bundle",
+    "type": "symfony-bundle",
+    "description": "Convert Symfony constraints into data-attributes for client-side validation with Parsley.",
+    "keywords": ["symfony", "bundle", "data", "fixtures", "doctrine"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Benoit Jouhaud",
+            "email": "bjouhaud@gmail.com",
+            "homepage": "https://github.com/J-Ben87"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JBen87\\DataBundle\\": ""
+        }
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/symfony": "^3.0",
+        "doctrine/data-fixtures": "^1.2",
+        "nelmio/alice": "^2.1"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^3.0"
+    },
+    "minimum-stability": "stable"
+}
