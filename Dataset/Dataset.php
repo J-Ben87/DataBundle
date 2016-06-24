@@ -1,8 +1,6 @@
 <?php
 
-namespace JBen87\DataBundle;
-
-use JBen87\DataBundle\Dataset\DatasetInterface;
+namespace JBen87\DataBundle\Dataset;
 
 /**
  * @author Benoit Jouhaud <bjouhaud@gmail.com>
