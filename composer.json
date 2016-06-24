@@ -1,7 +1,7 @@
 {
     "name": "j-ben87/data-bundle",
     "type": "symfony-bundle",
-    "description": "Convert Symfony constraints into data-attributes for client-side validation with Parsley.",
+    "description": "Allow to load fixtures datasets through command line.",
     "keywords": ["symfony", "bundle", "data", "fixtures", "doctrine"],
     "license": "MIT",
     "authors": [
