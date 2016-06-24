@@ -85,7 +85,9 @@ class FakeDataset extends Dataset
 
 To be registered with the command, it must also be declared as a service with the tag `data.dataset`.
 
-**Important:** the name of the dataset repository is guessed from the service id (e.g. the name for the service `app.data_fixtures.dataset.fake` will be `fake`).
+Optional alias `directory` can be used to set the dataset repository.
+
+**Important:** if not provided, the dataset repository is guessed from the service id (e.g. the repository for the service `app.data_fixtures.dataset.fake` will be `fake`).
 
 ```yml
 services:

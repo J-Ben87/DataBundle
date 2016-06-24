@@ -15,12 +15,12 @@ interface DatasetInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getRepository();
 
     /**
-     * @param string $name
+     * @param string $repository
      *
      * @return DatasetInterface
      */
-    public function setName($name);
+    public function setRepository($repository);
 }

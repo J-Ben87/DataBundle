@@ -12,21 +12,21 @@ abstract class Dataset implements DatasetInterface
     /**
      * @var string
      */
-    private $name;
+    private $repository;
 
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getRepository()
     {
-        return $this->name;
+        return $this->repository;
     }
 
     /**
      * @inheritDoc
      */
-    public function setName($name)
+    public function setRepository($repository)
     {
-        $this->name = $name;
+        $this->repository = $repository;
     }
 }

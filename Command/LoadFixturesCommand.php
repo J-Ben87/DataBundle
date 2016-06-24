@@ -164,7 +164,7 @@ class LoadFixturesCommand extends Command
     {
         $dataset = $this->getDataset($input->getArgument('dataset'));
 
-        $this->log($output, sprintf('loading "%s" dataset', $dataset->getName()));
+        $this->log($output, sprintf('loading "%s" dataset', $dataset->getRepository()));
 
         Fixtures::load($this->getFiles($dataset), $this->entityManager, $this->getOptions(), $this->processors);
     }
@@ -180,7 +180,7 @@ class LoadFixturesCommand extends Command
     {
         if (!isset($this->datasets[$name])) {
             $availableDatasets = json_encode(array_map(function (DatasetInterface $dataset) {
-                return $dataset->getName();
+                return $dataset->getRepository();
             }, $this->datasets));
 
             throw new InvalidArgumentException(sprintf(
@@ -201,7 +201,7 @@ class LoadFixturesCommand extends Command
     private function getFiles(DatasetInterface $dataset)
     {
         return array_map(function ($filename) use ($dataset) {
-            return sprintf('%s/%s/%s', $this->fixturesDir, $dataset->getName(), $filename);
+            return sprintf('%s/%s/%s', $this->fixturesDir, $dataset->getRepository(), $filename);
         }, $dataset->getFileNames());
     }
 
