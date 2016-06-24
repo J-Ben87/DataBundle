@@ -21,8 +21,8 @@ class DataExtension extends ConfigurableExtension
         // create service definition for load_fixtures command
         $definition = new Definition(LoadFixturesCommand::class, [
             new Reference('doctrine.orm.entity_manager'),
-            $mergedConfig['culture'],
             $mergedConfig['fixtures_dir'],
+            $mergedConfig['culture'],
         ]);
 
         $definition->addTag('console.command');
