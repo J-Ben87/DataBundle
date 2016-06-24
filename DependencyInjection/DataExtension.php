@@ -18,14 +18,11 @@ class DataExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container)
     {
-        $container->setParameter('data.culture', $mergedConfig['culture']);
-        $container->setParameter('data.fixtures_dir', $mergedConfig['fixtures_dir']);
-
         // create service definition for load_fixtures command
         $definition = new Definition(LoadFixturesCommand::class, [
             new Reference('doctrine.orm.entity_manager'),
-            $container->getParameter('data.fixtures_dir'),
-            $container->getParameter('data.culture'),
+            $mergedConfig['culture'],
+            $mergedConfig['fixtures_dir'],
         ]);
 
         $definition->addTag('console.command');
