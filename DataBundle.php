@@ -5,6 +5,8 @@ namespace JBen87\DataBundle;
 use JBen87\DataBundle\DependencyInjection\Compiler\DatasetCompilerPass;
 use JBen87\DataBundle\DependencyInjection\Compiler\ProcessorCompilerPass;
 use JBen87\DataBundle\DependencyInjection\Compiler\ProviderCompilerPass;
+use JBen87\DataBundle\DependencyInjection\DataExtension;
+use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -25,5 +27,36 @@ class DataBundle extends Bundle
             ->addCompilerPass(new ProcessorCompilerPass)
             ->addCompilerPass(new ProviderCompilerPass)
         ;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainerExtension()
+    {
+        return new DataExtension;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNamespace()
+    {
+        return __NAMESPACE__;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPath()
+    {
+        return __DIR__;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerCommands(Application $application)
+    {
     }
 }
