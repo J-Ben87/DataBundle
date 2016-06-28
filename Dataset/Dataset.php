@@ -10,7 +10,15 @@ class Dataset implements DatasetInterface
     /**
      * @var string[]
      */
-    private $files;
+    private $files = [];
+
+    /**
+     * @param string[] $files
+     */
+    public function __construct(array $files = [])
+    {
+        $this->files = $files;
+    }
 
     /**
      * @inheritDoc
@@ -18,13 +26,5 @@ class Dataset implements DatasetInterface
     public function getFiles()
     {
         return $this->files;
-    }
-
-    /**
-     * @param string[] $files
-     */
-    public function setFiles($files)
-    {
-        $this->files = $files;
     }
 }

@@ -41,13 +41,13 @@ class DataExtension extends ConfigurableExtension
      */
     private function buildCommandDefintion(array $config, ContainerBuilder $container)
     {
-        $definition = new Definition(LoadFixturesCommand::class);
-        $definition
-            ->addArgument(new Reference('doctrine.orm.entity_manager'))
-            ->addArgument($config['fixtures_dir'])
-            ->addArgument($config['culture'])
-            ->addTag('console.command')
-        ;
+        $definition = new Definition(LoadFixturesCommand::class, [
+            new Reference('doctrine.orm.entity_manager'),
+            $config['fixtures_dir'],
+            $config['culture']
+        ]);
+
+        $definition->addTag('console.command');
 
         $container->setDefinition('data.command.load_fixtures', $definition);
 
@@ -63,11 +63,11 @@ class DataExtension extends ConfigurableExtension
     private function buildDatasetDefinitions(array $config, ContainerBuilder $container)
     {
         foreach ($config['datasets'] as $alias => $dataset) {
-            $definition = new Definition(Dataset::class);
-            $definition
-                ->addMethodCall('setFileNames', [$dataset['files']])
-                ->addTag('data.dataset', ['alias' => $alias])
-            ;
+            $definition = new Definition(Dataset::class, [
+                $dataset['files']
+            ]);
+
+            $definition->addTag('data.dataset', ['alias' => $alias]);
 
             $container->setDefinition(sprintf('data.dataset.%s', $alias), $definition);
         }
