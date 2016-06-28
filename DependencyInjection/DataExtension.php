@@ -3,6 +3,7 @@
 namespace JBen87\DataBundle\DependencyInjection;
 
 use JBen87\DataBundle\Command\LoadFixturesCommand;
+use JBen87\DataBundle\Dataset\Dataset;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -18,16 +19,10 @@ class DataExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container)
     {
-        // create service definition for load_fixtures command
-        $definition = new Definition(LoadFixturesCommand::class, [
-            new Reference('doctrine.orm.entity_manager'),
-            $mergedConfig['fixtures_dir'],
-            $mergedConfig['culture'],
-        ]);
-
-        $definition->addTag('console.command');
-
-        $container->setDefinition('data.command.load_fixtures', $definition);
+        $this
+            ->buildCommandDefintion($mergedConfig, $container)
+            ->buildDatasetDefinitions($mergedConfig, $container)
+        ;
     }
 
     /**
@@ -36,5 +31,47 @@ class DataExtension extends ConfigurableExtension
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
         return new Configuration($container->getParameter('kernel.root_dir'));
+    }
+
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     *
+     * @return DataExtension
+     */
+    private function buildCommandDefintion(array $config, ContainerBuilder $container)
+    {
+        $definition = new Definition(LoadFixturesCommand::class);
+        $definition
+            ->addArgument(new Reference('doctrine.orm.entity_manager'))
+            ->addArgument($config['fixtures_dir'])
+            ->addArgument($config['culture'])
+            ->addTag('console.command')
+        ;
+
+        $container->setDefinition('data.command.load_fixtures', $definition);
+
+        return $this;
+    }
+
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     *
+     * @return DataExtension
+     */
+    private function buildDatasetDefinitions(array $config, ContainerBuilder $container)
+    {
+        foreach ($config['datasets'] as $alias => $dataset) {
+            $definition = new Definition(Dataset::class);
+            $definition
+                ->addMethodCall('setFileNames', [$dataset['files']])
+                ->addTag('data.dataset', ['alias' => $alias])
+            ;
+
+            $container->setDefinition(sprintf('data.dataset.%s', $alias), $definition);
+        }
+
+        return $this;
     }
 }

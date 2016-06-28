@@ -18,7 +18,7 @@ public function registerBundles()
         // ...
         new JBen87\DataBundle\DataBundle(),
     ];
-    
+
     // ...
 }
 ```
@@ -28,27 +28,66 @@ public function registerBundles()
 The bundle exposes the following configuration:
 
 ```yml
+# app/config/config.yml
 data:
     culture: fr_FR # required - used to generate localized data with Faker
-    fixtures_dir: "%kernel.root_dir%/data/fixtures" # default value - directory where fixtures dataset are located
+    fixtures_dir: "%kernel.root_dir%/data/fixtures" # default value - directory where datasets fixtures files are located
+    datasets:
+        fake:
+            files:
+                - "user.yml"
+                - "address.yml"
+        other:
+            files:
+                - "..."
 ```
 
 ## Basic usage
 
+### Command
+
 The bundle provides a command similar to [DoctrineFixturesBundle][1] to load your fixtures using [Alice][2] and [Faker][3].
 
 ```bash
-bin/console data:fixtures:load dataset [--append] [--purge-with-truncate]
+Usage:
+  bin/console data:fixtures:load <dataset> [options]
+
+Arguments:
+  dataset                    The dataset to load.
+
+Options:
+      --append               Append the data fixtures instead of deleting all data from the database first.
+      --purge-with-truncate  Purge data by using a database-level TRUNCATE statement
 ```
+
+### Dataset
 
 To load your fixtures, you first need to create a **dataset**.
 
 A dataset is made of two things:
 
-- a directory containing `yml` files that will be loaded by [Alice][2]
-- a `Dataset` class referencing the files to load (order matters)
+- a directory containing `yml` fixtures files that will be loaded by [Alice][2]
+- a `Dataset` service referencing the files to load (order matters)
 
-By default, the directory is located in `app/data/fixtures/fake/` but [this can be configured](#configuration).
+Note: if you use configuration to define your datasets, the `Dataset` service will be automatically handled for you.
+
+#### Defintion
+
+All you need to do is to list the fixtures files to load in the configuration in the order you want them to be processed.
+
+```yml
+# app/config/config.yml
+data:
+    datasets:
+        fake:
+            files:
+                - "user.yml"
+                - "..."
+```
+
+#### Fixtures files
+
+By default, the files containing the datasets fixtures are located in `app/data/fixtures` but [this can be configured](#configuration).
 
 ```yml
 # app/data/fixtures/fake/user.yml
@@ -60,51 +99,15 @@ AppBundle\Entity\User:
         password: <password()>
 ```
 
-The related `Dataset` class can be located anywhere.
-
-It must implement `JBen87\DataBundle\Dataset\DatasetInterface`. The abstract class `JBen87\DataBundle\Dataset\Dataset` implements it and provides standard behavior.
-
-```php
-// src/AppBundle/DataFixtures/Dataset/FakeDataset.php
-
-use JBen87\DataBundle\Dataset\Dataset;
-
-class FakeDataset extends Dataset
-{
-    /**
-     * @inheritDoc
-     */
-    public function getFileNames()
-    {
-        return [
-            'user.yml',
-        ];
-    }
-}
-```
-
-To be registered with the command, it must also be declared as a service with the tag `data.dataset`.
-
-Optional alias `directory` can be used to set the dataset repository.
-
-**Important:** if not provided, the dataset repository is guessed from the service id (e.g. the repository for the service `app.data_fixtures.dataset.fake` will be `fake`).
-
-```yml
-services:
-    app.data_fixtures.dataset.fake:
-        class: AppBundle\DataFixtures\Dataset\FakeDataset
-        public: false
-        tags:
-            - { name: data.dataset }
-```
-
 That's it, you are ready to go!
 
 ## Advanced usage
 
+### Providers & Processors
+
 [Alice][2] comes with [Providers][4] and [Processors][5].
 
-You can register yours with the command the same way you registered a `Dataset`: 
+You can register yours with the command the same way you registered a `Dataset`:
 
 - providers must be tagged with `data.provider`
 - processors must be tagged with `data.processor`
@@ -116,7 +119,7 @@ services:
         public: false
         tags:
             - { name: data.provider }
-            
+
     app.data_fixtures.processor.user:
         class: AppBundle\DataFixtures\Processor\User
         public: false
@@ -125,6 +128,47 @@ services:
 ```
 
 They will automatically be available and used to write your fixtures and process them.
+
+### Datasets
+
+If you can't or don't want to use configuration to define your datasets, you can also create them manually.
+
+Create a `Dataset` class somewhere in your project.
+It must implement `JBen87\DataBundle\Dataset\DatasetInterface`.
+Alternatively it can also extend the base class `JBen87\DataBundle\Dataset\Dataset`.
+
+```php
+// src/AppBundle/DataFixtures/Dataset/FakeDataset.php
+
+use JBen87\DataBundle\Dataset\Dataset;
+
+class FakeDataset extends Dataset
+{
+    /**
+     * @inheritDoc
+     */
+    public function getFiles()
+    {
+        return [
+            'user.yml',
+        ];
+    }
+}
+```
+
+To be registered with the command, it must also be declared as a service with the tag `data.dataset`.
+Optional tag attribute `alias` can be used to set the dataset name.
+
+**Important:** if not provided, the dataset name is guessed from the service id (e.g. the name for the service `app.data_fixtures.dataset.fake` will be `fake`).
+
+```yml
+services:
+    app.data_fixtures.dataset.fake:
+        class: AppBundle\DataFixtures\Dataset\FakeDataset
+        public: false
+        tags:
+            - { name: data.dataset }
+```
 
 ## Contributing
 

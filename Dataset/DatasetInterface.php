@@ -10,17 +10,5 @@ interface DatasetInterface
     /**
      * @return string[]
      */
-    public function getFileNames();
-
-    /**
-     * @return string
-     */
-    public function getRepository();
-
-    /**
-     * @param string $repository
-     *
-     * @return DatasetInterface
-     */
-    public function setRepository($repository);
+    public function getFiles();
 }
