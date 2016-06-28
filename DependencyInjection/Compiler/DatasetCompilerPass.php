@@ -17,15 +17,12 @@ class DatasetCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         foreach ($container->findTaggedServiceIds('data.dataset') as $id => $tags) {
-            $tags = reset($tags);
-            $repository = isset($tags['directory']) ? $tags['directory'] : preg_replace('#.+\.([^.]+)$#', '$1', $id);
-
-            $defintion = $container->findDefinition($id);
-            $defintion->addMethodCall('setRepository', [$repository]);
+            $attributes = reset($tags);
+            $alias = isset($attributes['alias']) ? $attributes['alias'] : preg_replace('#.+\.([^.]+)$#', '$1', $id);
 
             $container
                 ->findDefinition('data.command.load_fixtures')
-                ->addMethodCall('setDataset', [$repository, new Reference($id)])
+                ->addMethodCall('setDataset', [$alias, new Reference($id)])
             ;
         }
     }

@@ -162,11 +162,12 @@ class LoadFixturesCommand extends Command
      */
     private function loadFixtures(InputInterface $input, OutputInterface $output)
     {
-        $dataset = $this->getDataset($input->getArgument('dataset'));
+        $name = $input->getArgument('dataset');
+        $dataset = $this->getDataset($name);
 
-        $this->log($output, sprintf('loading "%s" dataset', $dataset->getRepository()));
+        $this->log($output, sprintf('loading "%s" dataset', $name));
 
-        Fixtures::load($this->getFiles($dataset), $this->entityManager, $this->getOptions(), $this->processors);
+        Fixtures::load($this->getFiles($name, $dataset), $this->entityManager, $this->getOptions(), $this->processors);
     }
 
     /**
@@ -179,14 +180,10 @@ class LoadFixturesCommand extends Command
     private function getDataset($name)
     {
         if (!isset($this->datasets[$name])) {
-            $availableDatasets = json_encode(array_map(function (DatasetInterface $dataset) {
-                return $dataset->getRepository();
-            }, $this->datasets));
-
             throw new InvalidArgumentException(sprintf(
                 'Invalid dataset "%s". Must be one of %s.',
                 $name,
-                $availableDatasets
+                json_encode(array_keys($this->datasets))
             ));
         }
 
@@ -194,15 +191,16 @@ class LoadFixturesCommand extends Command
     }
 
     /**
+     * @param string $directory
      * @param DatasetInterface $dataset
      *
      * @return string[]
      */
-    private function getFiles(DatasetInterface $dataset)
+    private function getFiles($directory, DatasetInterface $dataset)
     {
-        return array_map(function ($filename) use ($dataset) {
-            return sprintf('%s/%s/%s', $this->fixturesDir, $dataset->getRepository(), $filename);
-        }, $dataset->getFileNames());
+        return array_map(function ($filename) use ($directory) {
+            return sprintf('%s/%s/%s', $this->fixturesDir, $directory, $filename);
+        }, $dataset->getFiles());
     }
 
     /**

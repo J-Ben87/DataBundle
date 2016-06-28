@@ -5,26 +5,26 @@ namespace JBen87\DataBundle\Dataset;
 /**
  * @author Benoit Jouhaud <bjouhaud@gmail.com>
  */
-abstract class Dataset implements DatasetInterface
+class Dataset implements DatasetInterface
 {
     /**
-     * @var string
+     * @var string[]
      */
-    private $repository;
+    private $files;
 
     /**
      * @inheritDoc
      */
-    public function getRepository()
+    public function getFiles()
     {
-        return $this->repository;
+        return $this->files;
     }
 
     /**
-     * @inheritDoc
+     * @param string[] $files
      */
-    public function setRepository($repository)
+    public function setFiles($files)
     {
-        $this->repository = $repository;
+        $this->files = $files;
     }
 }
