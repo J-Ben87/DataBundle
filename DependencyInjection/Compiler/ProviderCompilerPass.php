@@ -19,7 +19,7 @@ class ProviderCompilerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('data.provider') as $id => $tags) {
             $container
                 ->findDefinition('data.command.load_fixtures')
-                ->addMethodCall('addProvider', [new Reference($id)])
+                ->addMethodCall('setProvider', [$id, new Reference($id)])
             ;
         }
     }

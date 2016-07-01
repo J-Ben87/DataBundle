@@ -30,13 +30,16 @@ The bundle exposes the following configuration:
 ```yml
 # app/config/config.yml
 data:
-    culture: fr_FR # required - used to generate localized data with Faker
-    fixtures_dir: "%kernel.root_dir%/data/fixtures" # default value - directory where datasets fixtures files are located
+    culture: fr_FR                                      # required - used to generate localized data with Faker
+    fixtures_dir: "%kernel.root_dir%/data/fixtures"     # default value - directory where datasets fixtures files are located
     datasets:
         fake:
             files:
                 - "user.yml"
                 - "address.yml"
+            processors:                                 # optional - white list some processors (default to all if empty)
+                - "@app.data_fixtures.processor.user"
+            providers:                                  # optional - white list some providers (default to all if empty)
         other:
             files:
                 - "..."
@@ -128,6 +131,8 @@ services:
 ```
 
 They will automatically be available and used to write your fixtures and process them.
+
+*Note: you can white list some providers or processors for a dataset in the [configuration](#configuration).*
 
 ### Datasets
 

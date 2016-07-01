@@ -19,7 +19,7 @@ class ProcessorCompilerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('data.processor') as $id => $tags) {
             $container
                 ->findDefinition('data.command.load_fixtures')
-                ->addMethodCall('addProcessor', [new Reference($id)])
+                ->addMethodCall('setProcessor', [$id, new Reference($id)])
             ;
         }
     }

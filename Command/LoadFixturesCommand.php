@@ -78,23 +78,25 @@ class LoadFixturesCommand extends Command
     }
 
     /**
+     * @param string $name
      * @param ProcessorInterface $processor
      *
      * @see ProcessorCompilerPass
      */
-    public function addProcessor(ProcessorInterface $processor)
+    public function setProcessor($name, ProcessorInterface $processor)
     {
-        $this->processors[] = $processor;
+        $this->processors[$name] = $processor;
     }
 
     /**
+     * @param string $name
      * @param Provider $provider
      *
      * @see ProviderCompilerPass
      */
-    public function addProvider(Provider $provider)
+    public function setProvider($name, Provider $provider)
     {
-        $this->providers[] = $provider;
+        $this->providers[$name] = $provider;
     }
 
     /**
@@ -167,7 +169,12 @@ class LoadFixturesCommand extends Command
 
         $this->log($output, sprintf('loading "%s" dataset', $name));
 
-        Fixtures::load($this->getFiles($name, $dataset), $this->entityManager, $this->getOptions(), $this->processors);
+        Fixtures::load(
+            $this->getFiles($name, $dataset),
+            $this->entityManager,
+            $this->getOptions($dataset),
+            $this->getProcessors($dataset)
+        );
     }
 
     /**
@@ -204,15 +211,45 @@ class LoadFixturesCommand extends Command
     }
 
     /**
+     * @param DatasetInterface $dataset
+     *
      * @return array
      */
-    private function getOptions()
+    private function getOptions(DatasetInterface $dataset)
     {
         return [
             'locale' => $this->culture,
-            'providers' => $this->providers,
+            'providers' => $this->getProviders($dataset),
             'seed' => null,
         ];
+    }
+
+    /**
+     * @param DatasetInterface $dataset
+     *
+     * @return ProcessorInterface[]
+     */
+    private function getProcessors(DatasetInterface $dataset)
+    {
+        if (count($dataset->getProcessors()) > 0) {
+            return array_intersect_key($dataset->getProcessors(), $this->processors);
+        }
+
+        return $this->processors;
+    }
+
+    /**
+     * @param DatasetInterface $dataset
+     *
+     * @return Provider[]
+     */
+    private function getProviders(DatasetInterface $dataset)
+    {
+        if (count($dataset->getProviders()) > 0) {
+            return array_intersect_key($dataset->getProviders(), $this->providers);
+        }
+
+        return $this->providers;
     }
 
     /**

@@ -64,7 +64,9 @@ class DataExtension extends ConfigurableExtension
     {
         foreach ($config['datasets'] as $alias => $dataset) {
             $definition = new Definition(Dataset::class, [
-                $dataset['files']
+                $dataset['files'],
+                $this->buildAssociativeReferences($dataset['processors']),
+                $this->buildAssociativeReferences($dataset['providers']),
             ]);
 
             $definition->addTag('data.dataset', ['alias' => $alias]);
@@ -73,5 +75,21 @@ class DataExtension extends ConfigurableExtension
         }
 
         return $this;
+    }
+
+    /**
+     * @param array $ids
+     *
+     * @return array
+     */
+    private function buildAssociativeReferences(array $ids)
+    {
+        $ids = array_map(function ($id) {
+            return str_replace('@', '', $id);
+        }, $ids);
+
+        return array_combine($ids, array_map(function ($id) {
+            return new Reference($id);
+        }, $ids));
     }
 }
