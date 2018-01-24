@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Benoit Jouhaud <bjouhaud@gmail.com>
@@ -175,6 +176,9 @@ class LoadFixturesCommand extends Command
             $this->getOptions($dataset),
             $this->getProcessors($dataset)
         );
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Fixtures loaded successfully!');
     }
 
     /**
